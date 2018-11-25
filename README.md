@@ -1,7 +1,7 @@
 #Flask-login with SQLalchemy
 
 ## how to use?
-> git clone https://github.com/cokia/flask-login ; cd flask-login ; cd modules ; python3 db_init.py ; cd .. ;
+> git clone https://github.com/cokia/flask-login
 
 and using app.py
 
