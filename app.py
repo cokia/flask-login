@@ -1,9 +1,22 @@
 from flask import *
 from sqlalchemy import *
-from db_init import base
-app = Flask(__name__)
+from flask import *
+from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
 
-class User(base):
+app = Flask(__name__)
+#===============================================================================================
+engine = create_engine('sqlite:////tmp/test.db', convert_unicode=True)
+db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+Base = declarative_base()
+Base.query = db_session.query_property()
+#===============================================================================================
+def init_db():
+    Base.metadata.create_all(bind=engine)
+
+class db(Base):
+	init_db()
 	__tablename__ = 'users'
 	id = Column(String(15), primary_key=True)
 	userid = Column(String(15), unique=True)
@@ -13,8 +26,7 @@ class User(base):
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-	""" Session control"""
-	if not session.get('login'):
+	if not db_session.get('login'):
 		return render_template('index.html')
 	else:
 		if request.method == 'POST':
@@ -22,7 +34,7 @@ def main():
 			return render_template('index.html', data=getfollowedby(username))
 		return render_template('index.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET','POST'])
 def login():
 	if request.method == 'GET':
 		return render_template('login.html')
@@ -32,7 +44,7 @@ def login():
 		try:
 			data = User.query.filter_by(username=name, password=passw).first()
 			if data is not None:
-				session['login'] = True
+				db_session['login'] = True
 				return redirect(url_for('main'))
 			else:
 				return "I Can't Login, how about retry?"
@@ -46,7 +58,8 @@ def register():
 
 @app.route('/logout', methods=['POST','GET']) 
 def logout():
-	session['login'] = False
+	db_session['login'] = False
 	return redirect(url_for('main'))
 	
-	
+if __name__ == "__main__":
+	app.run(host="0.0.0.0")
