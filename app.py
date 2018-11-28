@@ -27,7 +27,7 @@ db.create_all()
 #===============================================================================================
 @app.route('/', methods=['GET', 'POST'])
 def main():
-	if not db_session.get('login'):
+	if session == False:
 		return render_template('index.html')
 	else:
 		if request.method == 'POST':
@@ -48,9 +48,10 @@ def login():
 		passwd = request.form['pass']
 		
 		try:
-			data = User.query.filter_by(db_userid=userid, db_passwd=passwd).first()
+			data = User.query.filter_by(db_userid==userid, db_passwd==passwd).first()
 			if data is not None:
-				db_session['login'] = True
+				#db.session['login'] = True
+				session = True
 				return redirect(url_for('main'))
 			elif data is not None & userid == admin:
 				return redirect(url_for('admin'))
@@ -77,7 +78,7 @@ def register():
 #===============================================================================================
 @app.route('/logout', methods=['POST','GET']) 
 def logout():
-	db_session['login'] = False
+	session = False
 	return redirect(url_for('main'))
 #===============================================================================================
 if __name__ == "__main__":
