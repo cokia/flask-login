@@ -48,7 +48,7 @@ def login():
 		passwd = request.form['pass']
 		
 		try:
-			data = User.query.filter_by(db_userid==userid, db_passwd==passwd).first()
+			data = User.query.filter_by(db_userid=userid, db_passwd=passwd).first()
 			if data is not None:
 				#db.session['login'] = True
 				session = True
