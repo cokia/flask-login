@@ -28,12 +28,10 @@ db.create_all()
 @app.route('/', methods=['GET', 'POST'])
 def main():
 	if session == False:
-		return render_template('index.html')
-	else:
-		if request.method == 'POST':
-			username = getname(request.form['username'])
-			return render_template('index.html', data=getfollowedby(username))
-		return render_template('index.html')
+		#return render_template('index.html')
+		return "Not Login..OTL"	
+	if session == True:
+		return "logined!!"
 #===============================================================================================
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -53,7 +51,7 @@ def login():
 				#db.session['login'] = True
 				session = True
 				return redirect(url_for('main'))
-			elif data is not None & userid == admin:
+			elif data is not None and userid == admin:
 				return redirect(url_for('admin'))
 			else:
 				return "I Can't Login, how about retry?"
